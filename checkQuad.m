@@ -4,15 +4,14 @@ function checkQuad(currentPosition,desiredQuad)
 %disp('function run \n')
 %disp(desiredQuad)
 
-cordLimits = [320 240];
 % Frame size: [640 480]
 % mid X: 320
 % mid Y: 240
+cordLimits = [320 240];
 
+% currentPosition is (x1,y1), (x2,y2), (x3,y3), (x4,y4), but in an array so
+% currentPosition = [1,2, 3,4, 5,6, 7,8]
 
-%disp(cordLimits(:,1))
-%disp('currentpos5 \n')
-%disp(currentPosition(5))
 switch desiredQuad
 
     % Check Top Left
