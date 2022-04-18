@@ -84,10 +84,12 @@ while runLoop && frameCount < 800
             % Convert the box corners into the [x1 y1 x2 y2 x3 y3 x4 y4]
             % format required by insertShape.
             bboxPolygon = reshape(bboxPoints', 1, []);
-            checkQuad(bboxPolygon,desiredQuad);
+
             %run function that uses [x1 y1 x2 y2 ...] to see if the person
             %is in frame and if not it will tell the user what direction to
             %move
+            checkQuad(bboxPolygon,desiredQuad);
+            
             
 
             % Display a bounding box around the face being tracked.
