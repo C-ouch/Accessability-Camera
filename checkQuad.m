@@ -154,5 +154,3 @@ if(text ~= prev_instruction)
     [speech,fs] = text2speech(speechObjectGoogle,text);
     sound(speech,fs)
 end
-
-end

@@ -3,6 +3,7 @@
 
 
 
+
 % Sets up a speechClient object with the speech API and its properties.
 % This currently is a female Australian voice
 speechObjectGoogle = speechClient('Google','name','en-AU-Wavenet-C');
@@ -27,6 +28,7 @@ y = getaudiodata(recObj);
 speechObject = speechClient('Google','languageCode','en-US');
 tableOut = speech2text(speechObject,y,44100);
 desiredQuad = tableOut;
+
 
 
 %This file tracks the users face then, calls from checkQuad to check what
