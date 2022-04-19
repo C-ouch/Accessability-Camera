@@ -1,8 +1,39 @@
+% %This file tracks the users face then, calls from checkQuad to check what
+% %quadrant the face is in.
+
+
+
+% Sets up a speechClient object with the speech API and its properties.
+% This currently is a female Australian voice
+speechObjectGoogle = speechClient('Google','name','en-AU-Wavenet-C');
+speechObjectGoogle.Options;
+
+%ask for user input
+[speech,fs] = text2speech(speechObjectGoogle,"Where would you like your face to appear ([1]top left [2]top right [3]bottom left [4]bottom right)");
+sound(speech,fs)
+
+pause(5);
+
+% Use microphone to record audio
+recObj = audiorecorder(44100, 16, 1);
+disp('Start speaking.')
+recordblocking(recObj, 5);
+disp('End of Recording.')
+
+y = getaudiodata(recObj);
+
+%Takes recorded audio and passes it to Google speech2text api and outputs
+%desired quadrant
+speechObject = speechClient('Google','languageCode','en-US');
+tableOut = speech2text(speechObject,y,44100);
+desiredQuad = tableOut;
+
+
 %This file tracks the users face then, calls from checkQuad to check what
 %quadrant the face is in.
 
-%ask for user input
-desiredQuad = input("Where would you like your face to appear ([1]top left [2]top right [3]bottom left [4]bottom right)","s");
+% %ask for user input
+% desiredQuad = input("Where would you like your face to appear ([1]top left [2]top right [3]bottom left [4]bottom right)","s");
 
 % Sets up a speechClient object with the speech API and its properties.
 % This currently is a female Australian voice
@@ -32,6 +63,9 @@ framesInCorrectQuad = 0;
 
 % Sets an initial previous intruction so the checkQuad can run
 prev_instruction = "";
+
+%Starts out with thinking there is no face found
+found = 1;
 
 while runLoop && frameCount < 800
 
@@ -72,9 +106,27 @@ while runLoop && frameCount < 800
 
             % Display detected corners.
             videoFrame = insertMarker(videoFrame, xyPoints, '+', 'Color', 'white');
-
-            [speech,fs] = text2speech(speechObjectGoogle,"Face found");
+            
+            % if face is found: found = true
+            found = 1;
+            [speech,fs] = text2speech(speechObjectGoogle,"Face Found");
             sound(speech,fs)
+        else
+            % if face is not found: found = 0
+            if(found == 1)
+                found = false;
+                [speech,fs] = text2speech(speechObjectGoogle,"Face not Found, try slowly moving to the left");
+                sound(speech,fs)
+                lastFrameNF = frameCount;
+            
+            elseif(lastFrameNF == frameCount - 90 && found == 0)
+                [speech,fs] = text2speech(speechObjectGoogle,"Face still not Found, slowly move right");
+                sound(speech,fs)
+
+            elseif(lastFrameNF == frameCount - 60 && found == 2)
+                [speech,fs] = text2speech(speechObjectGoogle,"Face still Lost, try slowly moving in the opposite direction");
+                sound(speech,fs)
+            end
         end
 
     else
@@ -106,11 +158,15 @@ while runLoop && frameCount < 800
             % frameCount is an argument so the text-to-speech doesn't go
             %off every frame.
             
-            [prev_instruction, takePicture,framesInCorrectQuad] = checkQuad(bboxPolygon,desiredQuad, prev_instruction, framesInCorrectQuad);
+            [prev_instruction, takePicture,framesInCorrectQuad] = checkQuad(bboxPolygon,desiredQuad.(1), prev_instruction, framesInCorrectQuad);
+
+
             if(takePicture == 1)
                 img = snapshot(cam);
                 image(img);
                 imwrite(img,'SelfPhoto.JPEG','Quality', 100);
+                [speech,fs] = text2speech(speechObjectGoogle,"Picture Taken");
+                sound(speech,fs)
                 break;
             end
 
@@ -125,9 +181,11 @@ while runLoop && frameCount < 800
             setPoints(pointTracker, oldPoints);
 
         else
-            [speech,fs] = text2speech(speechObjectGoogle,"Face not found");
+            % if face is lost: found = 2
+            [speech,fs] = text2speech(speechObjectGoogle,"Face Lost, stay still");
             sound(speech,fs)
-
+            found = 2;
+            lastFrameNF = frameCount;
         end
 
     end
