@@ -93,6 +93,7 @@ while runLoop && frameCount < 800
             if(takePicture == 1)
                 img = snapshot(cam);
                 image(img);
+                imwrite(img,'SelfPhoto.JPEG','Quality', 100);
                 break;
             end
 
