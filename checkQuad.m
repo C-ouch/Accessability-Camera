@@ -1,4 +1,4 @@
-function [return_prev] = checkQuad(currentPosition,desiredQuad, prev_instruction)
+function [return_prev,correctQuad,counter] = checkQuad(currentPosition,desiredQuad, prev_instruction, counter)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %disp('function run \n')
@@ -8,6 +8,8 @@ function [return_prev] = checkQuad(currentPosition,desiredQuad, prev_instruction
 % mid X: 320
 % mid Y: 240
 cordLimits = [320 240];
+
+correctQuad = 0;
 
 % currentPosition is (x1,y1), (x2,y2), (x3,y3), (x4,y4), but in an array so
 % currentPosition = [1,2, 3,4, 5,6, 7,8]
@@ -28,21 +30,28 @@ switch desiredQuad
             %move both up and right
             text = "move right and up";
             return_prev = text;
+            counter = 0;
 
         elseif(currentPosition(5) > cordLimits(:,1))
             %move right
             text = "move right";
             return_prev = text;
+            counter = 0;
 
         elseif(currentPosition(6) > cordLimits(:,2))
             %move up
             text = "move up";
             return_prev = text;
+            counter = 0;
 
         else
             %correct quad
             text = "Correct Quadrant";
             return_prev = text;
+            counter = counter + 1;
+            if(counter >= 60)
+                correctQuad = 1;
+            end
         end
 
         % Check Top Right
@@ -52,20 +61,28 @@ switch desiredQuad
             %move both up and left
             text = "move left and up";
             return_prev = text;
+            counter = 0;
 
         elseif(currentPosition(7) < cordLimits(:,1))
             %move left
             text = "move left";
             return_prev = text;
+            counter = 0;
 
         elseif(currentPosition(8) > cordLimits(:,2))
             %move up
             text = "move up";
             return_prev = text;
+            counter = 0;
+
         else
             %correct quad
             text = "Correct Quadrant";
             return_prev = text;
+            counter = counter + 1;
+            if(counter >= 60)
+                correctQuad = 1;
+            end
         end
 
         % Check Bottom Left
@@ -75,20 +92,28 @@ switch desiredQuad
             %move both right and down            
             text = "move right and down";
             return_prev = text;
+            counter = 0;
 
         elseif(currentPosition(3) > cordLimits(:,1))
             %move right
             text = "move right";
             return_prev = text;
+            counter = 0;
 
         elseif(currentPosition(4) < cordLimits(:,2))
             %move down
             text = "move down";
             return_prev = text;
+            counter = 0;
+
         else
             %correct quad
             text = "Correct Quadrant";
             return_prev = text;
+            counter = counter + 1;
+            if(counter >= 60)
+                correctQuad = 1;
+            end
         end
 
         % Check Bottom Right
@@ -98,20 +123,28 @@ switch desiredQuad
             %move both left and down            
             text = "move left and down";
             return_prev = text;
+            counter = 0;
 
         elseif(currentPosition(1) < cordLimits(:,1))
             %move left
             text = "move left";
             return_prev = text;
+            counter = 0;
 
         elseif(currentPosition(2) < cordLimits(:,2))
             %move down
             text = "move down";
             return_prev = text;
+            counter = 0;
+
         else
             %correct quad
             text = "Correct Quadrant";
             return_prev = text;
+            counter = counter + 1;
+            if(counter >= 60)
+                correctQuad = 1;
+            end
         end
     otherwise
 end

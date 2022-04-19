@@ -28,6 +28,7 @@ videoPlayer = vision.VideoPlayer('Position', [100 100 [frameSize(2), frameSize(1
 runLoop = true;
 numPts = 0;
 frameCount = 0;
+framesInCorrectQuad = 0;
 
 % Sets an initial previous intruction so the checkQuad can run
 prev_instruction = "";
@@ -105,8 +106,13 @@ while runLoop && frameCount < 800
             % frameCount is an argument so the text-to-speech doesn't go
             %off every frame.
             
-            prev_instruction = checkQuad(bboxPolygon,desiredQuad, prev_instruction);
-          
+            [prev_instruction, takePicture,framesInCorrectQuad] = checkQuad(bboxPolygon,desiredQuad, prev_instruction, framesInCorrectQuad);
+            if(takePicture == 1)
+                img = snapshot(cam);
+                image(img);
+                imwrite(img,'SelfPhoto.JPEG','Quality', 100);
+                break;
+            end
 
             % Display a bounding box around the face being tracked.
             videoFrame = insertShape(videoFrame, 'Polygon', bboxPolygon, 'LineWidth', 3);
