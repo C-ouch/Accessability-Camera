@@ -1,3 +1,22 @@
+% %This file tracks the users face then, calls from checkQuad to check what
+% %quadrant the face is in.
+% 
+% 
+% 
+% % Sets up a speechClient object with the speech API and its properties.
+% % This currently is a female Australian voice
+% speechObjectGoogle = speechClient('Google','name','en-AU-Wavenet-C');
+% speechObjectGoogle.Options;
+% 
+% %ask for user input
+% [speech,fs] = text2speech(speechObjectGoogle,"Where would you like your face to appear ([1]top left [2]top right [3]bottom left [4]bottom right)");
+%     sound(speech,fs)
+% 
+% speechObject = speechClient('Google','languageCode','en-US','maxAlternatives',3);
+% tableOut(1,1) = speech2text(speechObject,y,fs);
+% desiredQuad = tableOut;
+
+
 %This file tracks the users face then, calls from checkQuad to check what
 %quadrant the face is in.
 
