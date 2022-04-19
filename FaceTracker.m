@@ -20,6 +20,7 @@ videoPlayer = vision.VideoPlayer('Position', [100 100 [frameSize(2), frameSize(1
 runLoop = true;
 numPts = 0;
 frameCount = 0;
+framesInCorrectQuad = 0;
 
 while runLoop && frameCount < 800
 
@@ -88,9 +89,12 @@ while runLoop && frameCount < 800
             %run function that uses [x1 y1 x2 y2 ...] to see if the person
             %is in frame and if not it will tell the user what direction to
             %move
-            checkQuad(bboxPolygon,desiredQuad);
-            
-            
+            [takePicture,framesInCorrectQuad] = checkQuad(bboxPolygon,desiredQuad,framesInCorrectQuad);
+            if(takePicture == 1)
+                img = snapshot(cam);
+                image(img);
+                break;
+            end
 
             % Display a bounding box around the face being tracked.
             videoFrame = insertShape(videoFrame, 'Polygon', bboxPolygon, 'LineWidth', 3);
