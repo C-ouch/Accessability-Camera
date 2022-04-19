@@ -1,5 +1,13 @@
+%This file tracks the users face then, calls from checkQuad to check what
+%quadrant the face is in.
+
 %ask for user input
 desiredQuad = input("Where would you like your face to appear ([1]top left [2]top right [3]bottom left [4]bottom right)","s");
+
+% Sets up a speechClient object with the speech API and its properties.
+% This currently is a female Australian voice
+speechObjectGoogle = speechClient('Google','name','en-AU-Wavenet-C');
+speechObjectGoogle.Options;
 
 % Create the face detector object.
 faceDetector = vision.CascadeObjectDetector();
@@ -20,6 +28,9 @@ videoPlayer = vision.VideoPlayer('Position', [100 100 [frameSize(2), frameSize(1
 runLoop = true;
 numPts = 0;
 frameCount = 0;
+
+% Sets an initial previous intruction so the checkQuad can run
+prev_instruction = "";
 
 while runLoop && frameCount < 800
 
@@ -60,6 +71,9 @@ while runLoop && frameCount < 800
 
             % Display detected corners.
             videoFrame = insertMarker(videoFrame, xyPoints, '+', 'Color', 'white');
+
+            [speech,fs] = text2speech(speechObjectGoogle,"Face found");
+            sound(speech,fs)
         end
 
     else
@@ -87,10 +101,12 @@ while runLoop && frameCount < 800
 
             %run function that uses [x1 y1 x2 y2 ...] to see if the person
             %is in frame and if not it will tell the user what direction to
-            %move
-            checkQuad(bboxPolygon,desiredQuad);
+            %move.
+            % frameCount is an argument so the text-to-speech doesn't go
+            %off every frame.
             
-            
+            prev_instruction = checkQuad(bboxPolygon,desiredQuad, prev_instruction);
+          
 
             % Display a bounding box around the face being tracked.
             videoFrame = insertShape(videoFrame, 'Polygon', bboxPolygon, 'LineWidth', 3);
@@ -101,6 +117,11 @@ while runLoop && frameCount < 800
             % Reset the points.
             oldPoints = visiblePoints;
             setPoints(pointTracker, oldPoints);
+
+        else
+            [speech,fs] = text2speech(speechObjectGoogle,"Face not found");
+            sound(speech,fs)
+
         end
 
     end

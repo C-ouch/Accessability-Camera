@@ -1,4 +1,4 @@
-function checkQuad(currentPosition,desiredQuad)
+function [return_prev] = checkQuad(currentPosition,desiredQuad, prev_instruction)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %disp('function run \n')
@@ -12,6 +12,13 @@ cordLimits = [320 240];
 % currentPosition is (x1,y1), (x2,y2), (x3,y3), (x4,y4), but in an array so
 % currentPosition = [1,2, 3,4, 5,6, 7,8]
 
+% Sets up a speechClient object with the speech API and its properties.
+% This currently is a female Australian voice
+speechObjectGoogle = speechClient('Google','name','en-AU-Wavenet-C');
+speechObjectGoogle.Options;
+
+
+
 switch desiredQuad
 
     % Check Top Left
@@ -19,17 +26,23 @@ switch desiredQuad
     case '1'
         if(currentPosition(5) > cordLimits(:,1) && currentPosition(6) > cordLimits(:,2))
             %move both up and right
-            disp('move right and up')
+            text = "move right and up";
+            return_prev = text;
+
         elseif(currentPosition(5) > cordLimits(:,1))
             %move right
-            disp('move right')
+            text = "move right";
+            return_prev = text;
 
         elseif(currentPosition(6) > cordLimits(:,2))
             %move up
-            disp('move up')
+            text = "move up";
+            return_prev = text;
+
         else
             %correct quad
-            disp('Correct Quad')
+            text = "Correct Quadrant";
+            return_prev = text;
         end
 
         % Check Top Right
@@ -37,58 +50,76 @@ switch desiredQuad
     case '2'
         if(currentPosition(7) < cordLimits(:,1) && currentPosition(8) > cordLimits(:,2))
             %move both up and left
-            disp('move left and up')
+            text = "move left and up";
+            return_prev = text;
+
         elseif(currentPosition(7) < cordLimits(:,1))
             %move left
-            disp('move left')
+            text = "move left";
+            return_prev = text;
 
         elseif(currentPosition(8) > cordLimits(:,2))
             %move up
-            disp('move up')
+            text = "move up";
+            return_prev = text;
         else
             %correct quad
-            disp('Correct Quad')
+            text = "Correct Quadrant";
+            return_prev = text;
         end
 
         % Check Bottom Left
         % Top Right point of rectangle (3,4)
     case '3'
         if(currentPosition(3) > cordLimits(:,1) && currentPosition(4) < cordLimits(:,2))
-            %move both right and down
-            disp('move right and down')
+            %move both right and down            
+            text = "move right and down";
+            return_prev = text;
+
         elseif(currentPosition(3) > cordLimits(:,1))
             %move right
-            disp('move right')
+            text = "move right";
+            return_prev = text;
 
         elseif(currentPosition(4) < cordLimits(:,2))
             %move down
-            disp('move down')
+            text = "move down";
+            return_prev = text;
         else
             %correct quad
-            disp('Correct Quad')
+            text = "Correct Quadrant";
+            return_prev = text;
         end
 
         % Check Bottom Right
         % Top Left point of rectangle (1,2)
     case '4'
         if(currentPosition(1) < cordLimits(:,1) && currentPosition(2) < cordLimits(:,2))
-            %move both down and left
-            disp('move left and down')
+            %move both left and down            
+            text = "move left and down";
+            return_prev = text;
+
         elseif(currentPosition(1) < cordLimits(:,1))
-            %move right
-            disp('move left')
+            %move left
+            text = "move left";
+            return_prev = text;
 
         elseif(currentPosition(2) < cordLimits(:,2))
             %move down
-            disp('move down')
+            text = "move down";
+            return_prev = text;
         else
             %correct quad
-            disp('Correct Quad')
+            text = "Correct Quadrant";
+            return_prev = text;
         end
     otherwise
-
-
 end
 
+%This makes it so the voice doesn't repeat everytime it calls the function
+if(text ~= prev_instruction)
+    [speech,fs] = text2speech(speechObjectGoogle,text);
+    sound(speech,fs)
+end
 
 end
